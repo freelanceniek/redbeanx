@@ -13,3 +13,5 @@ R::getRedBean()->idFieldMap= array('adres'=>'id_adres','contact'=>'contact_id');
 Future improvements: support custom Foreign keys.
 
 R::getRedBean()->fkeyFieldMap=array('source_tablename'=>['dest_tablename'=>'fkey_fieldname']);
+
+See also: https://freedomsponsors.org/issue/813/make-redbean-support-existing-databases
