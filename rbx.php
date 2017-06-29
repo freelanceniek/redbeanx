@@ -17,7 +17,7 @@ namespace RedBeanPHP {
  * with this source code in the file license.txt.
  */
 interface Logger
-{
+{	
 	/**
 	 * A logger (for PDO or OCI driver) needs to implement the log method.
 	 * The log method will receive logging data. Note that the number of parameters is 0, this means
@@ -1510,7 +1510,7 @@ class OODBBean implements\IteratorAggregate,\ArrayAccess,\Countable,Jsonable
 		$type = $this->beau( $type );
 
 		if ( $this->aliasName ) {
-			$parentField = $this->aliasName;
+			$parentField = $this->aliasName;	
 			$myFieldLink = $parentField . '_id';
 
 			$this->__info['sys.alias.' . $type] = $this->aliasName;
@@ -1737,9 +1737,9 @@ class OODBBean implements\IteratorAggregate,\ArrayAccess,\Countable,Jsonable
 	 * @return array
 	 */
 	public function export( $meta = FALSE, $parents = FALSE, $onlyMe = FALSE, $filters = array() )
-	{
+	{	
 		$arr = array();
-
+		
 		if ( $parents ) {
 			foreach ( $this as $key => $value ) {
 				if ( substr( $key, -3 ) != '_id' ) continue;
@@ -3630,11 +3630,11 @@ class DBAdapter extends Observable implements Adapter
 		$this->db->close();
 	}
 	
-	// public $idFieldMap= array('adres'=>'ida', 'contact'=>'idc');
+	// this function can probably deleted (odb->getIdField())
 	
 	public function getIdField($table)
 	{
-		$this->oodb->getIdField($table);
+		return $this->oodb->getIdField($table);
 
 	}
 }
@@ -5713,7 +5713,7 @@ class MySQL extends AQueryWriter implements QueryWriter
 	public function createTable( $table )
 	{
 		// niek added dynamic idField 
-		$idfield= $this->adapter->getIdField($table);
+		$idfield= $this->oodb->getIdField($table);
 		$table = $this->esc( $table );
 		
 		$encoding = $this->adapter->getDatabase()->getMysqlEncoding();
@@ -5733,7 +5733,7 @@ class MySQL extends AQueryWriter implements QueryWriter
 		foreach ( $columnsRaw as $r ) {
 			$columns[$r['Field']] = $r['Type'];
 		}
-
+		
 		return $columns;
 	}
 
@@ -6260,7 +6260,7 @@ class SQLiteT extends AQueryWriter implements QueryWriter
 	 */
 	public function createTable( $table )
 	{
-		$idfield= $this->adapter->getIdField($table);
+		$idfield= $this->oodb->getIdField($table);
 		$table = $this->esc( $table );
 
 		$sql   = "CREATE TABLE $table ( $idfield INTEGER PRIMARY KEY AUTOINCREMENT ) ";
@@ -6553,9 +6553,10 @@ class PostgreSQL extends AQueryWriter implements QueryWriter
 	 */
 	public function createTable( $table )
 	{
+		$idField= $this->oodb->getIdField($table);
 		$table = $this->esc( $table );
 
-		$this->adapter->exec( " CREATE TABLE $table (id SERIAL PRIMARY KEY); " );
+		$this->adapter->exec( " CREATE TABLE $table ($idField SERIAL PRIMARY KEY); " );
 	}
 
 	/**
@@ -6609,7 +6610,7 @@ class PostgreSQL extends AQueryWriter implements QueryWriter
 				return PostgreSQL::C_DATATYPE_SPECIAL_POLYGON;
 			}
 
-			if ( preg_match( '/^\-?(\$|€|¥|£)[\d,\.]+$/', $value ) ) {
+			if ( preg_match( '/^\-?(\$|â‚¬|Â¥|Â£)[\d,\.]+$/', $value ) ) {
 				return PostgreSQL::C_DATATYPE_SPECIAL_MONEY;
 			}
 
@@ -8098,14 +8099,14 @@ class OODB extends Observable
 	* @var array $idFieldMap
 	* 
 	*/
-	public $idFieldMap= array(); //['adres'=>'ida', 'contact'=>'idc'];
+	public $idFieldMap= array(); //'adres'=>'ida', 'contact'=>'idc');
 
 	/**
 	* An array with customized foreign keyfield names (to support existing database)
 	* @var array $fkeyMap 
 	* 
 	*/
-	public $fkeyFieldMap=array();//'source_tablename'=>['dest_tablename'=>'fkey_fieldname']);
+	public $fkeyFieldMap=array('source_tablename'=>['dest_tablename'=>'fkey_fieldname']);
 	
 	/**
 	* Return Id Fieldname 
@@ -8456,16 +8457,16 @@ class OODB extends Observable
 	}
 
 	/**
-	 * This is a convenience method; it converts database rows
-	 * (arrays) into beans. Given a type and a set of rows this method
-	 * will return an array of beans of the specified type loaded with
-	 * the data fields provided by the result set from the database.
+	 * This is a convenience method; it converts database rows 
+	 * (arrays) into beans. Given a type and a set of rows this method 
+	 * will return an array of beans of the specified type loaded with 
+	 * the data fields provided by the result set from the database. 
 	 *
-	 * @param string $type type of beans you would like to have
-	 * @param array  $rows rows from the database result
-	 * @param string $mask mask to apply for meta data
-	 *
-	 * @return array
+	 * @param string $type type of beans you would like to have 
+	 * @param array  $rows rows from the database result 
+	 * @param string $mask mask to apply for meta data 
+	 * 
+	 * @return array 
 	 */
 	public function convertToBeans( $type, $rows, $mask = NULL )
 	{
