@@ -8098,14 +8098,14 @@ class OODB extends Observable
 	* @var array $idFieldMap
 	* 
 	*/
-	protected $idFieldMap= array(); //'adres'=>'ida', 'contact'=>'idc');
+	public $idFieldMap= array(); //['adres'=>'ida', 'contact'=>'idc'];
 
 	/**
 	* An array with customized foreign keyfield names (to support existing database)
 	* @var array $fkeyMap 
 	* 
 	*/
-	protected $fkeyFieldMap=array('source_tablename'=>['dest_tablename'=>'fkey_fieldname']);
+	public $fkeyFieldMap=array();//'source_tablename'=>['dest_tablename'=>'fkey_fieldname']);
 	
 	/**
 	* Return Id Fieldname 
